@@ -28,7 +28,6 @@ RUN apt-get -y install python-software-properties && \
 
 # Decouple our data from our container.
 VOLUME ["/data"]
-VOLUME ["/backups"]
 
 # Configure the database to use our data dir.
 RUN sed -i -e 's/^datadir\s*=.*/datadir = \/data/' /etc/mysql/my.cnf
@@ -39,9 +38,5 @@ RUN sed -i 's/127.0.0.1/0.0.0.0/' /etc/mysql/my.cnf
 
 EXPOSE 3306
 ADD start.sh /start.sh
-ADD backup.sh /backup.sh
 
 RUN chmod +x /start.sh
-RUN chmod +x /backup.sh
-
-RUN (crontab -l ; echo "0,10,20,30,40,50 * * * * /backup.sh") |uniq - | crontab -
